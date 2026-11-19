@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaskFlow | Manage your day</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <main class="container">
+        <header class="header">
+            <div class="brand-mark">✓</div>
+            <div>
+                <p class="eyebrow">YOUR PERSONAL WORKSPACE</p>
+                <h1>TaskFlow</h1>
+                <p class="subtitle">A little progress every day adds up.</p>
+            </div>
+        </header>
+
+        <section class="task-card">
+            <form class="add-form" action="{{ url_for('add_task') }}" method="POST">
+                <input type="text" name="title" placeholder="What needs to get done?" required maxlength="200">
+                <button type="submit">Add task <span>＋</span></button>
+            </form>
+
+            <div class="list-heading">
+                <h2>Your tasks</h2>
+                <span class="count">{{ tasks|length }} total</span>
+            </div>
+
+            {% if tasks %}
+                <ul class="task-list">
+                    {% for task in tasks %}
+                    <li class="task-item {% if task['completed'] %}completed{% endif %}">
+                        <form action="{{ url_for('complete_task', task_id=task['id']) }}" method="POST">
+                            <button class="check-button" type="submit" aria-label="Toggle completion">
+                                {% if task['completed'] %}✓{% endif %}
+                            </button>
+                        </form>
+                        <span class="task-title">{{ task['title'] }}</span>
+                        <form action="{{ url_for('delete_task', task_id=task['id']) }}" method="POST">
+                            <button class="delete-button" type="submit" aria-label="Delete task">×</button>
+                        </form>
+                    </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <div class="empty-state">
+                    <div class="empty-icon">✦</div>
+                    <h3>Nothing on your list yet</h3>
+                    <p>Add your first task above and make today count.</p>
+                </div>
+            {% endif %}
+        </section>
+        <footer>Stay focused. Keep moving forward.</footer>
+    </main>
+</body>
+</html>
